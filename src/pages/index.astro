@@ -1,17 +1,899 @@
 ---
+import '../styles/global.css';
 
+const APP_URL = 'https://expertum.vercel.app';
+const SIGNUP_URL = `${APP_URL}/signup`;
+
+const features = [
+  {
+    icon: `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
+    tag: 'IA',
+    title: 'Extração automática de processos',
+    desc: 'Envie o PDF do PJe. Em menos de 60 segundos a IA extrai número, partes, datas, endereço, quesitos e tipos de risco — sem digitar uma linha.',
+  },
+  {
+    icon: `<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>`,
+    tag: 'IA',
+    title: 'Checklist de campo gerado por IA',
+    desc: 'A plataforma gera automaticamente um checklist .docx personalizado para cada processo. Leve impresso e preencha durante a vistoria.',
+  },
+  {
+    icon: `<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><line x1="8" x2="16" y1="13" y2="13"/><line x1="8" x2="16" y1="17" y2="17"/>`,
+    tag: 'Premium',
+    title: 'Pré-laudo com IA',
+    desc: 'Após a vistoria, suba o checklist preenchido e receba um rascunho completo de laudo pericial gerado automaticamente. Você refina e assina.',
+  },
+  {
+    icon: `<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>`,
+    tag: 'IA',
+    title: 'Respostas a impugnações',
+    desc: 'Suba o laudo e as impugnações das partes. A IA analisa cada quesito levantado e gera rascunhos de resposta estruturados por parte.',
+  },
+  {
+    icon: `<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>`,
+    tag: 'IA',
+    title: 'Extração de sentença',
+    desc: 'Envie o PDF da decisão judicial e a IA extrai valor dos honorários, responsável pelo pagamento, resultado da perícia e data prevista de recebimento.',
+  },
+  {
+    icon: `<polygon points="3 11 22 2 13 21 11 13 3 11"/>`,
+    tag: 'Roterizador',
+    title: 'Planejamento de rotas',
+    desc: 'Arraste processos para os dias da semana, reordene e abra a rota otimizada no Google Maps. Prazos urgentes ficam destacados automaticamente.',
+  },
+  {
+    icon: `<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>`,
+    tag: 'Financeiro',
+    title: 'Gestão de honorários',
+    desc: 'Dashboard com receita recebida, pendente e atrasada. Gráfico semanal de previsão. Edite valores, datas e responsável diretamente na tabela.',
+  },
+  {
+    icon: `<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>`,
+    tag: 'Agendamento',
+    title: 'Controle de prazos',
+    desc: 'Calendário com todos os prazos de laudo e audiências. Integração com Google Agenda. Alertas de prazo urgente antes que seja tarde.',
+  },
+  {
+    icon: `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>`,
+    tag: 'Segurança',
+    title: 'Privado e seguro',
+    desc: 'Seus dados ficam criptografados na sua conta. Modo privado para usar em locais públicos. Sem acesso de terceiros.',
+  },
+];
+
+const pipeline = [
+  { label: 'Entrada',       desc: 'PDF extraído e dados validados pela IA',           color: '#C24B18' },
+  { label: 'Agendamento',   desc: 'Data, horário, local e e-mail de notificação',      color: '#2E4B3C' },
+  { label: 'Perícia',       desc: 'Checklist gerado, quesitos e dados confirmados',    color: '#185053' },
+  { label: 'Laudo',         desc: 'Pré-laudo com IA, análise de EPIs, entrega',        color: '#C24B18' },
+  { label: 'Esclarecimentos', desc: 'Impugnações recebidas, respostas geradas por IA', color: '#2E4B3C' },
+  { label: 'Decisão',       desc: 'Sentença enviada, honorários extraídos pela IA',   color: '#185053' },
+  { label: 'Pagamento',     desc: 'Valor, pagante e data de recebimento registrados', color: '#C24B18' },
+  { label: 'Finalizado',    desc: 'Processo encerrado com resumo e documentos',       color: '#ABB28A' },
+];
+
+const aiFeatures = [
+  {
+    title: 'Extração de processos',
+    desc: 'PDF do PJe → dados completos em 60 segundos. Número, partes, endereço, prazo, quesitos e mais.',
+    badge: 'Automático',
+  },
+  {
+    title: 'Self-Heal de dados',
+    desc: 'A IA detecta divergências nos dados extraídos e sugere correções antes que o erro chegue à vistoria.',
+    badge: 'Inteligente',
+  },
+  {
+    title: 'Pré-laudo',
+    desc: 'Checklist preenchido em campo → rascunho de laudo pericial pronto para revisão. Horas economizadas.',
+    badge: 'Premium',
+  },
+  {
+    title: 'Respostas a impugnações',
+    desc: 'A IA lê as impugnações das partes e gera rascunhos de resposta estruturados por reclamante, reclamada e juízo.',
+    badge: 'IA',
+  },
+  {
+    title: 'Extração de sentença',
+    desc: 'Valor dos honorários, pagante, resultado (deferido/parcial) e data prevista — tudo extraído do PDF da sentença.',
+    badge: 'Automático',
+  },
+];
+
+const plans = [
+  {
+    name: 'Starter',
+    price: 'Grátis',
+    period: '',
+    desc: 'Para conhecer a plataforma',
+    highlight: false,
+    features: [
+      '3 processos ativos',
+      'Extração por IA (3 por mês)',
+      'Checklist de campo gerado',
+      'Pipeline de etapas',
+      'Controle de prazos',
+    ],
+    cta: 'Começar grátis',
+    href: SIGNUP_URL,
+  },
+  {
+    name: 'Pro',
+    price: 'R$ 97',
+    period: '/mês',
+    desc: 'Para o perito que quer escalar',
+    highlight: true,
+    features: [
+      'Processos ilimitados',
+      'Extração IA ilimitada',
+      'Pré-laudo com IA',
+      'Respostas a impugnações',
+      'Extração de sentença',
+      'Roterizador completo',
+      'Financeiro completo',
+      'Suporte prioritário',
+    ],
+    cta: 'Assinar Pro',
+    href: SIGNUP_URL,
+  },
+  {
+    name: 'Escritório',
+    price: 'R$ 247',
+    period: '/mês',
+    desc: 'Para equipes e escritórios periciais',
+    highlight: false,
+    features: [
+      'Tudo do Pro',
+      'Até 5 peritos',
+      'Dashboard consolidado',
+      'Gestão de equipe',
+      'Onboarding dedicado',
+    ],
+    cta: 'Falar com o time',
+    href: SIGNUP_URL,
+  },
+];
+
+const faqs = [
+  {
+    q: 'Funciona com processos do PJe e outros tribunais?',
+    a: 'Sim. A plataforma foi desenvolvida para PDFs do PJe, mas aceita documentos exportados de qualquer tribunal. Se o PDF abre no seu computador, a IA consegue extrair.',
+  },
+  {
+    q: 'Preciso instalar alguma coisa?',
+    a: 'Não. O Expertum roda direto no navegador, em qualquer computador ou tablet. Sem instalação, sem configuração.',
+  },
+  {
+    q: 'Os dados dos meus processos ficam seguros?',
+    a: 'Sim. Usamos Supabase com criptografia em repouso e em trânsito. Seus dados pertencem a você — não compartilhamos com terceiros nem usamos para treinar modelos de IA.',
+  },
+  {
+    q: 'O pré-laudo substitui o trabalho técnico do perito?',
+    a: 'Não. O pré-laudo é um rascunho baseado nos dados que você coletou em campo. A análise técnica, o juízo de valor e a assinatura são sempre do perito. A IA economiza horas de digitação — não substitui o especialista.',
+  },
+  {
+    q: 'Posso cancelar quando quiser?',
+    a: 'Sim. Sem fidelidade, sem multa. Cancele a qualquer momento direto pelo painel de configurações.',
+  },
+  {
+    q: 'O roterizador funciona com qual mapa?',
+    a: 'O roterizador usa o Google Maps para visualizar e organizar rotas. Ao montar a sequência de vistorias do dia, um clique abre a rota completa no Maps com todos os endereços em ordem.',
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="generator" content={Astro.generator} />
+  <title>Expertum — Sua perícia, no mais alto nível</title>
+  <meta name="description" content="Plataforma de gestão pericial com IA para peritos judiciais. Extração automática de processos, checklist, pré-laudo, roterizador e controle financeiro." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────────────────────────── -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex-shrink-0">
+      <img src="/logo-branco.svg" alt="Expertum" class="h-7 w-auto nav-logo-white" />
+      <img src="/logo-preto.svg" alt="Expertum" class="h-7 w-auto nav-logo-dark hidden" />
+    </a>
+
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#features" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors">Funcionalidades</a>
+      <a href="#pipeline" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors">Pipeline</a>
+      <a href="#precos" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors">Preços</a>
+    </div>
+
+    <div class="hidden md:flex items-center gap-3">
+      <a href={APP_URL} class="nav-link text-sm font-medium text-white/70 hover:text-white transition-colors">Entrar</a>
+      <a href={SIGNUP_URL} class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-xl transition-all hover:bg-brand-600">
+        Começar grátis
+      </a>
+    </div>
+
+    <button id="menu-btn" class="md:hidden p-2 rounded-lg text-white/80 hover:text-white transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t px-6 py-4 space-y-3" style="background-color: #F6F5EB; border-color: #D4D2C8;">
+    <a href="#features" class="block text-sm font-medium py-1" style="color: #3D4A45;">Funcionalidades</a>
+    <a href="#pipeline" class="block text-sm font-medium py-1" style="color: #3D4A45;">Pipeline</a>
+    <a href="#precos" class="block text-sm font-medium py-1" style="color: #3D4A45;">Preços</a>
+    <hr style="border-color: #D4D2C8;" />
+    <a href={SIGNUP_URL} class="btn-primary w-full justify-center text-sm">Começar grátis</a>
+  </div>
+</nav>
+
+
+<!-- ── HERO ────────────────────────────────────────────────────────────── -->
+<section class="relative min-h-screen flex items-center overflow-hidden pt-16" style="background-color: #09332C;">
+
+  <!-- Wave art -->
+  <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    {[
+      { baseY: 750, count: 18, maxOp: 0.22 },
+      { baseY: 620, count: 13, maxOp: 0.14 },
+      { baseY: 500, count: 9,  maxOp: 0.08 },
+    ].map((band, bi) =>
+      Array.from({ length: band.count }, (_, i) => {
+        const mid = band.count / 2;
+        const offset = (i - mid) * 12;
+        const baseY = band.baseY + offset;
+        const dist = Math.abs(i - mid) / mid;
+        const op = band.maxOp * (1 - dist * 0.6);
+        return (
+          <path
+            d={`M -40,${baseY + 40} C 180,${baseY - 20} 420,${baseY - 80} 720,${baseY - 30} C 980,${baseY + 20} 1220,${baseY - 60} 1480,${baseY + 30}`}
+            stroke="#ABB28A"
+            stroke-width="1.1"
+            stroke-opacity={op}
+            fill="none"
+          />
+        );
+      })
+    )}
+  </svg>
+
+  <!-- Bottom fade to surface -->
+  <div class="absolute bottom-0 left-0 right-0 h-40 pointer-events-none" style="background: linear-gradient(to bottom, transparent, #F6F5EB);"></div>
+
+  <div class="relative z-10 max-w-6xl mx-auto px-6 py-28 grid lg:grid-cols-2 gap-16 items-center w-full">
+
+    <!-- Copy -->
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8 text-xs font-semibold uppercase tracking-widest" style="background: rgba(171,178,138,0.15); color: #ABB28A; border: 1px solid rgba(171,178,138,0.25);">
+        ✦ Gestão Pericial com IA
+      </div>
+
+      <h1 class="font-lora text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight" style="color: #FFFFFF;">
+        Sua perícia,<br/>
+        no mais alto<br/>
+        <em class="not-italic" style="color: #F7DFBA;">nível.</em>
+      </h1>
+
+      <p class="mt-6 text-base leading-relaxed max-w-md" style="color: #ABB28A;">
+        Do PDF do PJe ao pagamento dos honorários — tudo em uma plataforma. Extração automática, checklist, pré-laudo com IA, roterizador e controle financeiro.
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href={SIGNUP_URL} class="btn-primary text-base px-8 py-3.5">Começar grátis</a>
+        <a href="#como-funciona" class="text-base px-8 py-3.5 font-semibold rounded-xl transition-all" style="border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF;">
+          Ver como funciona
+        </a>
+      </div>
+
+      <p class="mt-5 text-xs" style="color: rgba(171,178,138,0.6);">Sem cartão de crédito · Cancele quando quiser</p>
+    </div>
+
+    <!-- Dashboard mockup -->
+    <div class="hidden lg:block" style="animation: float 6s ease-in-out infinite;">
+      <div class="rounded-2xl overflow-hidden shadow-2xl" style="background-color: #F7EDDA;">
+        <!-- Window chrome -->
+        <div class="flex items-center justify-between px-5 py-3 border-b" style="background-color: #F6F5EB; border-color: #D4D2C8;">
+          <div class="flex items-center gap-1.5">
+            <div class="w-2.5 h-2.5 rounded-full" style="background: #FF5F57;"></div>
+            <div class="w-2.5 h-2.5 rounded-full" style="background: #FFBD2E;"></div>
+            <div class="w-2.5 h-2.5 rounded-full" style="background: #28C840;"></div>
+          </div>
+          <span class="text-xs font-mono" style="color: #9E9C92;">expertum.vercel.app</span>
+          <div class="w-14"></div>
+        </div>
+
+        <div class="p-5">
+          <!-- KPI cards -->
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            {[
+              { label: 'Processos', value: '18', color: '#1C2320' },
+              { label: 'Prazo próx.', value: '4', color: '#C24B18' },
+              { label: 'A receber', value: 'R$18k', color: '#09332C' },
+            ].map(k => (
+              <div class="rounded-xl p-3 text-center" style="background: #F0EFE5;">
+                <p class="text-base font-bold" style={`color: ${k.color};`}>{k.value}</p>
+                <p class="text-[10px] mt-0.5" style="color: #9E9C92;">{k.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Process rows -->
+          <div class="space-y-1.5 mb-3">
+            {[
+              { name: 'Metalúrgica Indústria S.A.',  etapa: 'Laudo',     dot: '#C24B18' },
+              { name: 'Construtora Exemplo Ltda',    etapa: 'Perícia',   dot: '#185053' },
+              { name: 'Logística Expressa Ltda',     etapa: 'Decisão',   dot: '#2E4B3C' },
+              { name: 'Farmácia Popular Eireli',      etapa: 'Pagamento', dot: '#ABB28A' },
+            ].map(p => (
+              <div class="flex items-center justify-between py-1.5 border-b" style="border-color: #D4D2C8;">
+                <div class="flex items-center gap-2">
+                  <div class="w-1.5 h-1.5 rounded-full" style={`background: ${p.dot};`}></div>
+                  <span class="text-[11px] font-medium truncate max-w-[160px]" style="color: #1C2320;">{p.name}</span>
+                </div>
+                <span class="text-[10px]" style="color: #9E9C92;">{p.etapa}</span>
+              </div>
+            ))}
+          </div>
+
+          <!-- AI extraction bar -->
+          <div class="rounded-xl p-3" style="background: #09332C;">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-1.5 h-1.5 rounded-full" style="background: #ABB28A; animation: pulse 2s infinite;"></div>
+              <span class="text-[10px] font-semibold uppercase tracking-wider" style="color: #ABB28A;">IA extraindo processo…</span>
+            </div>
+            <div class="w-full h-1 rounded-full" style="background: rgba(171,178,138,0.2);">
+              <div class="h-full rounded-full" style="width: 73%; background: #ABB28A;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── PROBLEMA / SOLUÇÃO ───────────────────────────────────────────────── -->
+<section class="py-24" style="background-color: #F6F5EB;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-12 items-start">
+
+      <div class="reveal">
+        <span class="section-label">O problema</span>
+        <h2 class="font-lora text-3xl lg:text-4xl font-bold mt-3 mb-8 leading-snug" style="color: #1C2320;">
+          O perito expert não deveria desperdiçar horas com burocracia.
+        </h2>
+        <div class="space-y-4">
+          {[
+            'Redigitar manualmente dados do PJe em planilhas ou Word',
+            'Montar checklist de campo do zero para cada vistoria',
+            'Controlar prazos de laudo e audiências em papel ou Excel',
+            'Gerenciar honorários, pagantes e atrasos em abas separadas',
+            'Escrever respostas a impugnações sem nenhum suporte',
+            'Planejar rotas de vistoria sem visão consolidada do dia',
+          ].map(pain => (
+            <div class="flex items-start gap-3">
+              <span class="text-sm mt-0.5 flex-shrink-0" style="color: #D96E42;">✕</span>
+              <p class="text-sm leading-relaxed" style="color: #3D4A45;">{pain}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay: 0.15s;">
+        <div class="rounded-2xl p-8" style="background-color: #09332C;">
+          <span class="text-xs font-semibold uppercase tracking-widest" style="color: #ABB28A;">A solução</span>
+          <h3 class="font-lora text-2xl font-bold mt-3 mb-6 leading-snug" style="color: #FFFFFF;">
+            Uma plataforma que faz o trabalho pesado para que você foque no que realmente exige expertise.
+          </h3>
+          <div class="space-y-3.5">
+            {[
+              'PDF importado → dados completos em menos de 60 segundos',
+              'Checklist de campo gerado automaticamente para cada processo',
+              'Prazos, etapas e audiências em um único painel visual',
+              'Honorários, previsão de receita e atrasos em tempo real',
+              'Respostas a impugnações rascunhadas por IA para você revisar',
+              'Roterizador com drag-and-drop e rota no Google Maps',
+            ].map(sol => (
+              <div class="flex items-start gap-3">
+                <span class="text-sm mt-0.5 flex-shrink-0" style="color: #ABB28A;">✓</span>
+                <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.8);">{sol}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FEATURES ─────────────────────────────────────────────────────────── -->
+<section id="features" class="py-24" style="background-color: #F7EDDA;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <span class="section-label">Funcionalidades</span>
+      <h2 class="font-lora text-3xl lg:text-4xl font-bold mt-3" style="color: #1C2320;">
+        Tudo que um perito judicial precisa,<br/>em um só lugar.
+      </h2>
+      <p class="mt-4 text-sm leading-relaxed max-w-xl mx-auto" style="color: #3D4A45;">
+        Cada funcionalidade foi construída a partir de uma dor real do dia a dia pericial.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {features.map((f, i) => (
+        <div
+          class="reveal bg-white rounded-2xl p-6 hover:-translate-y-1 transition-all duration-300"
+          style={`transition-delay: ${i * 0.05}s; box-shadow: 0 12px 40px -12px rgba(9,51,44,0.10);`}
+        >
+          <div class="flex items-start justify-between mb-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={f.tag === 'IA' || f.tag === 'Premium'
+                ? 'background-color: #EDF5E3;'
+                : f.tag === 'Financeiro'
+                  ? 'background-color: #FFF3E8;'
+                  : 'background-color: #F0EFE5;'}>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-5 h-5"
+                style={f.tag === 'IA' || f.tag === 'Premium'
+                  ? 'color: #2E4B3C;'
+                  : f.tag === 'Financeiro'
+                    ? 'color: #C24B18;'
+                    : 'color: #3D4A45;'}
+                set:html={f.icon}
+              />
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+              style={f.tag === 'IA' || f.tag === 'Premium'
+                ? 'background: #EDF5E3; color: #2E4B3C;'
+                : f.tag === 'Financeiro'
+                  ? 'background: #FFF3E8; color: #C24B18;'
+                  : 'background: #F0EFE5; color: #3D4A45;'
+              }>
+              {f.tag}
+            </span>
+          </div>
+          <h3 class="font-lora text-base font-semibold mb-2" style="color: #1C2320;">{f.title}</h3>
+          <p class="text-sm leading-relaxed" style="color: #3D4A45;">{f.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+<!-- ── COMO FUNCIONA ────────────────────────────────────────────────────── -->
+<section id="como-funciona" class="py-24" style="background-color: #F6F5EB;">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <span class="section-label">Como funciona</span>
+      <h2 class="font-lora text-3xl lg:text-4xl font-bold mt-3" style="color: #1C2320;">
+        Do processo ao pagamento,<br/>sem atrito.
+      </h2>
+    </div>
+
+    <div class="relative">
+      <div class="absolute left-8 top-4 bottom-4 w-px hidden sm:block" style="background: #D4D2C8;"></div>
+
+      <div class="space-y-8">
+        {[
+          { num: '01', title: 'Importe o processo', desc: 'Faça upload do PDF direto do PJe ou de qualquer tribunal. A extração começa imediatamente.' },
+          { num: '02', title: 'IA organiza os dados', desc: 'Número, partes, endereço, quesitos, datas e tipos de risco extraídos e validados automaticamente.' },
+          { num: '03', title: 'Agende com inteligência', desc: 'Defina data e horário, gere o e-mail de agendamento e organize a semana com o Roterizador.' },
+          { num: '04', title: 'Vá ao campo com o checklist', desc: 'Checklist .docx gerado especificamente para o processo. Preencha durante a vistoria.' },
+          { num: '05', title: 'Gere o laudo com IA', desc: 'Suba o checklist preenchido e receba o rascunho do laudo. Revise, ajuste e entregue.' },
+          { num: '06', title: 'Responda impugnações', desc: 'IA lê as impugnações das partes e gera respostas estruturadas. Você edita e exporta em .docx.' },
+          { num: '07', title: 'Registre a sentença', desc: 'Upload do PDF da decisão. Honorários, pagante e data de recebimento extraídos automaticamente.' },
+          { num: '08', title: 'Receba e finalize', desc: 'Marque o pagamento como recebido. Processo encerrado com histórico completo e documentos disponíveis.' },
+        ].map((s, i) => (
+          <div class="reveal flex gap-6 items-start" style={`transition-delay: ${i * 0.07}s;`}>
+            <div class="relative z-10 w-16 h-16 rounded-2xl flex-shrink-0 flex items-center justify-center"
+              style="background: #09332C; box-shadow: 0 8px 32px -8px rgba(9,51,44,0.20);">
+              <span class="font-mono text-sm font-bold" style="color: #F7DFBA;">{s.num}</span>
+            </div>
+            <div class="pt-3.5">
+              <h3 class="font-lora text-base font-semibold" style="color: #1C2320;">{s.title}</h3>
+              <p class="mt-1 text-sm leading-relaxed" style="color: #3D4A45;">{s.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── PIPELINE ─────────────────────────────────────────────────────────── -->
+<section id="pipeline" class="py-24" style="background-color: #09332C;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <span class="text-xs font-semibold uppercase tracking-widest" style="color: #ABB28A;">Pipeline de 8 etapas</span>
+      <h2 class="font-lora text-3xl lg:text-4xl font-bold mt-3" style="color: #FFFFFF;">
+        Cada processo tem seu lugar.<br/>Você sabe onde cada um está.
+      </h2>
+      <p class="mt-4 text-sm leading-relaxed max-w-lg mx-auto" style="color: #ABB28A;">
+        8 etapas estruturadas, cada uma com suas ações, ferramentas de IA e prazos específicos.
+      </p>
+    </div>
+
+    <!-- Pipeline visual -->
+    <div class="reveal overflow-x-auto pb-4">
+      <div class="flex gap-3 min-w-max mx-auto justify-center flex-wrap">
+        {pipeline.map((p, i) => (
+          <div class="flex items-center gap-3">
+            <div class="rounded-2xl p-4 text-center w-36" style={`background: ${p.color}18; border: 1px solid ${p.color}35;`}>
+              <div class="w-2 h-2 rounded-full mx-auto mb-2" style={`background: ${p.color};`}></div>
+              <p class="text-sm font-semibold mb-1" style="color: #FFFFFF;">{p.label}</p>
+              <p class="text-[10px] leading-snug" style="color: rgba(171,178,138,0.75);">{p.desc}</p>
+            </div>
+            {i < pipeline.length - 1 && (
+              <span class="text-lg font-light hidden sm:block" style="color: rgba(171,178,138,0.3);">→</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── IA EM DESTAQUE ───────────────────────────────────────────────────── -->
+<section class="py-24" style="background-color: #F7EDDA;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <div class="reveal">
+        <span class="section-label">Inteligência Artificial</span>
+        <h2 class="font-lora text-3xl lg:text-4xl font-bold mt-3 leading-snug" style="color: #1C2320;">
+          IA em cada etapa do processo pericial.
+        </h2>
+        <p class="mt-4 text-sm leading-relaxed" style="color: #3D4A45;">
+          Não é um chatbot genérico. São ferramentas de IA construídas especificamente para o fluxo de trabalho do perito judicial — da extração do PDF até a sentença.
+        </p>
+
+        <div class="mt-8 space-y-4">
+          {aiFeatures.map((f, i) => (
+            <div class="reveal flex gap-4" style={`transition-delay: ${i * 0.08}s;`}>
+              <div class="w-2 h-2 rounded-full mt-2 flex-shrink-0" style="background: #2E4B3C;"></div>
+              <div>
+                <div class="flex items-center gap-2 mb-0.5">
+                  <p class="text-sm font-semibold" style="color: #1C2320;">{f.title}</p>
+                  <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+                    style="background: #EDF5E3; color: #2E4B3C;">{f.badge}</span>
+                </div>
+                <p class="text-sm leading-relaxed" style="color: #3D4A45;">{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="reveal space-y-3" style="transition-delay: 0.2s;">
+        <!-- Roterizador card -->
+        <div class="rounded-2xl p-6 bg-white" style="box-shadow: 0 12px 40px -12px rgba(9,51,44,0.10);">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style="background: #EDF5E3;">🗺️</div>
+            <div>
+              <p class="text-sm font-semibold" style="color: #1C2320;">Roterizador</p>
+              <p class="text-xs" style="color: #9E9C92;">Planejamento semanal de vistorias</p>
+            </div>
+          </div>
+          <!-- Simulated week -->
+          <div class="grid grid-cols-5 gap-1.5">
+            {['Seg', 'Ter', 'Qua', 'Qui', 'Sex'].map((d, i) => (
+              <div class="rounded-lg p-2 text-center" style="background: #F0EFE5;">
+                <p class="text-[9px] font-semibold uppercase mb-1.5" style="color: #9E9C92;">{d}</p>
+                {i === 1 && <div class="rounded p-1 mb-1 text-[9px] font-medium truncate" style="background: #FFF3E8; color: #C24B18;">Metálica S.A.</div>}
+                {i === 1 && <div class="rounded p-1 text-[9px] font-medium truncate" style="background: #EDF5E3; color: #2E4B3C;">Construtora</div>}
+                {i === 3 && <div class="rounded p-1 text-[9px] font-medium truncate" style="background: #FFF3E8; color: #C24B18;">Logística Exp.</div>}
+              </div>
+            ))}
+          </div>
+          <p class="text-[10px] mt-3" style="color: #9E9C92;">Arraste processos entre os dias · Rota no Google Maps com 1 clique</p>
+        </div>
+
+        <!-- Financeiro card -->
+        <div class="rounded-2xl p-6 bg-white" style="box-shadow: 0 12px 40px -12px rgba(9,51,44,0.10);">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style="background: #FFF3E8;">💰</div>
+            <div>
+              <p class="text-sm font-semibold" style="color: #1C2320;">Financeiro</p>
+              <p class="text-xs" style="color: #9E9C92;">Controle de honorários</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            {[
+              { label: 'Recebido', value: 'R$24.800', color: '#2E4B3C' },
+              { label: 'Pendente', value: 'R$11.200', color: '#C24B18' },
+              { label: 'Atrasado', value: 'R$3.600', color: '#dc2626' },
+            ].map(k => (
+              <div class="rounded-xl p-2.5 text-center" style="background: #F0EFE5;">
+                <p class="text-xs font-bold" style={`color: ${k.color};`}>{k.value}</p>
+                <p class="text-[9px] mt-0.5" style="color: #9E9C92;">{k.label}</p>
+              </div>
+            ))}
+          </div>
+          <p class="text-[10px] mt-3" style="color: #9E9C92;">Gráfico semanal · Previsão de recebimento · Edição inline</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── MÉTRICAS ─────────────────────────────────────────────────────────── -->
+<section class="py-20" style="background-color: #F6F5EB;">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {[
+        { value: '< 60s', label: 'para extrair um processo', detail: 'média da IA Gemini' },
+        { value: '8',     label: 'etapas cobertas', detail: 'da entrada ao pagamento' },
+        { value: '100%',  label: 'no navegador', detail: 'sem instalar nada' },
+        { value: '0',     label: 'planilhas necessárias', detail: 'tudo na plataforma' },
+      ].map((m, i) => (
+        <div class="reveal text-center p-6 rounded-2xl bg-white"
+          style={`transition-delay: ${i * 0.08}s; box-shadow: 0 12px 40px -12px rgba(9,51,44,0.10);`}>
+          <p class="font-lora text-4xl font-bold" style="color: #C24B18;">{m.value}</p>
+          <p class="mt-2 text-sm font-medium" style="color: #1C2320;">{m.label}</p>
+          <p class="text-xs mt-1" style="color: #9E9C92;">{m.detail}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+<!-- ── PREÇOS ───────────────────────────────────────────────────────────── -->
+<section id="precos" class="py-24" style="background-color: #F7EDDA;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <span class="section-label">Preços</span>
+      <h2 class="font-lora text-3xl lg:text-4xl font-bold mt-3" style="color: #1C2320;">
+        Plano simples, sem surpresas.
+      </h2>
+      <p class="mt-3 text-sm" style="color: #3D4A45;">Cancele quando quiser. Sem fidelidade, sem multa.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5 items-stretch">
+      {plans.map((p, i) => (
+        <div
+          class="reveal rounded-2xl p-8 flex flex-col"
+          style={`transition-delay: ${i * 0.1}s; ${p.highlight
+            ? 'background: #09332C; box-shadow: 0 8px 32px -8px rgba(9,51,44,0.30); transform: scale(1.02);'
+            : 'background: #FFFFFF; box-shadow: 0 12px 40px -12px rgba(9,51,44,0.10);'
+          }`}
+        >
+          {p.highlight && (
+            <span class="self-start mb-4 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
+              style="background: #C24B18; color: #FFFFFF;">
+              Mais popular
+            </span>
+          )}
+
+          <h3 class="font-lora text-xl font-bold" style={`color: ${p.highlight ? '#FFFFFF' : '#1C2320'};`}>{p.name}</h3>
+          <p class="text-xs mt-1" style={`color: ${p.highlight ? '#ABB28A' : '#9E9C92'};`}>{p.desc}</p>
+
+          <div class="mt-6 mb-6">
+            <span class="font-lora text-4xl font-bold" style={`color: ${p.highlight ? '#FFFFFF' : '#1C2320'};`}>{p.price}</span>
+            <span class="text-sm" style={`color: ${p.highlight ? '#ABB28A' : '#9E9C92'};`}>{p.period}</span>
+          </div>
+
+          <ul class="space-y-3 flex-1 mb-8">
+            {p.features.map(f => (
+              <li class="flex items-start gap-2">
+                <span class="text-xs mt-0.5" style={`color: ${p.highlight ? '#ABB28A' : '#C24B18'};`}>✓</span>
+                <span class="text-sm" style={`color: ${p.highlight ? 'rgba(255,255,255,0.8)' : '#3D4A45'};`}>{f}</span>
+              </li>
+            ))}
+          </ul>
+
+          <a href={p.href}
+            class="block text-center py-3 rounded-xl text-sm font-semibold transition-all"
+            style={p.highlight
+              ? 'background: #C24B18; color: #FFFFFF;'
+              : 'border: 1px solid #D4D2C8; color: #1C2320;'
+            }
+            onmouseover={p.highlight
+              ? "this.style.background='#A33D12'"
+              : "this.style.background='#F0EFE5'"}
+            onmouseout={p.highlight
+              ? "this.style.background='#C24B18'"
+              : "this.style.background='transparent'"}
+          >
+            {p.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FAQ ──────────────────────────────────────────────────────────────── -->
+<section class="py-24" style="background-color: #F6F5EB;">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="text-center mb-12 reveal">
+      <span class="section-label">Dúvidas</span>
+      <h2 class="font-lora text-3xl font-bold mt-3" style="color: #1C2320;">Perguntas frequentes</h2>
+    </div>
+
+    <div class="space-y-2" id="faq-list">
+      {faqs.map((f, i) => (
+        <div class="reveal rounded-2xl overflow-hidden bg-white"
+          style={`transition-delay: ${i * 0.06}s; box-shadow: 0 2px 8px rgba(9,51,44,0.06);`}>
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left transition-colors hover:bg-surface-container-low">
+            <span class="font-lora text-sm font-semibold pr-4" style="color: #1C2320;">{f.q}</span>
+            <svg class="faq-icon w-4 h-4 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: #9E9C92;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5">
+            <p class="text-sm leading-relaxed" style="color: #3D4A45;">{f.a}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+<!-- ── CTA FINAL ────────────────────────────────────────────────────────── -->
+<section class="relative py-32 overflow-hidden" style="background-color: #09332C;">
+  <!-- Wave art -->
+  <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 1440 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    {Array.from({ length: 12 }, (_, i) => {
+      const baseY = 320 + (i - 6) * 15;
+      const op = 0.28 * (1 - Math.abs(i - 6) / 6 * 0.55);
+      return (
+        <path
+          d={`M -40,${baseY} C 280,${baseY - 70} 640,${baseY + 50} 960,${baseY - 35} C 1180,${baseY - 70} 1340,${baseY + 25} 1480,${baseY}`}
+          stroke="#ABB28A"
+          stroke-width="1.1"
+          stroke-opacity={op}
+          fill="none"
+        />
+      );
+    })}
+  </svg>
+
+  <div class="relative z-10 max-w-3xl mx-auto px-6 text-center reveal">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color: #ABB28A;">Comece hoje</span>
+    <h2 class="font-lora text-3xl lg:text-5xl font-bold mt-4 leading-tight" style="color: #FFFFFF;">
+      Sua perícia,<br/>no mais alto nível.
+    </h2>
+    <p class="mt-6 text-base leading-relaxed max-w-lg mx-auto" style="color: #ABB28A;">
+      Experimente gratuitamente. Seu primeiro processo extraído em menos de 60 segundos. Sem cartão de crédito, sem instalação.
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-3">
+      <a href={SIGNUP_URL} class="btn-primary text-base px-10 py-4">Criar conta grátis</a>
+      <a href={APP_URL} class="text-base px-10 py-4 font-semibold rounded-xl transition-all"
+        style="border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF;">
+        Já tenho conta
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ───────────────────────────────────────────────────────────── -->
+<footer class="py-12 border-t" style="background-color: #F6F5EB; border-color: #D4D2C8;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+      <div class="lg:col-span-2">
+        <img src="/logo-preto.svg" alt="Expertum" class="h-7 w-auto mb-4" />
+        <p class="text-sm leading-relaxed max-w-xs" style="color: #3D4A45;">
+          Plataforma de gestão pericial com inteligência artificial para peritos judiciais brasileiros.
+        </p>
+        <p class="mt-3 text-xs font-medium italic" style="color: #ABB28A;">"Sua perícia, no mais alto nível."</p>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-4" style="color: #9E9C92;">Produto</p>
+        <ul class="space-y-2">
+          <li><a href="#features" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Funcionalidades</a></li>
+          <li><a href="#pipeline" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Pipeline de etapas</a></li>
+          <li><a href="#precos" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Preços</a></li>
+          <li><a href={SIGNUP_URL} class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Criar conta</a></li>
+          <li><a href={APP_URL} class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Acessar plataforma</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-4" style="color: #9E9C92;">Legal</p>
+        <ul class="space-y-2">
+          <li><a href="/privacidade" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Política de privacidade</a></li>
+          <li><a href="/termos" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Termos de uso</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-color: #D4D2C8;">
+      <p class="text-xs" style="color: #9E9C92;">© {new Date().getFullYear()} Expertum — Sistema de Gestão Pericial</p>
+      <p class="text-xs" style="color: #9E9C92;">Feito para peritos judiciais brasileiros ✦</p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ── SCRIPTS ──────────────────────────────────────────────────────────── -->
+<script>
+  // Navbar: troca cores quando sai do hero (fundo verde)
+  const navbar = document.getElementById('navbar') as HTMLElement;
+  const logoWhite = document.querySelector('.nav-logo-white') as HTMLElement;
+  const logoDark = document.querySelector('.nav-logo-dark') as HTMLElement;
+  const navLinks = document.querySelectorAll('.nav-link') as NodeListOf<HTMLElement>;
+
+  function updateNav() {
+    const scrolled = window.scrollY > 80;
+    if (scrolled) {
+      navbar.style.cssText = 'background: rgba(246,245,235,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #D4D2C8; box-shadow: 0 1px 12px rgba(9,51,44,0.06);';
+      logoWhite?.classList.add('hidden');
+      logoDark?.classList.remove('hidden');
+      navLinks.forEach(l => { l.style.color = '#3D4A45'; l.onmouseover = () => l.style.color = '#1C2320'; l.onmouseout = () => l.style.color = '#3D4A45'; });
+    } else {
+      navbar.style.cssText = '';
+      logoWhite?.classList.remove('hidden');
+      logoDark?.classList.add('hidden');
+      navLinks.forEach(l => { l.style.color = 'rgba(255,255,255,0.8)'; l.onmouseover = () => l.style.color = '#FFFFFF'; l.onmouseout = () => l.style.color = 'rgba(255,255,255,0.8)'; });
+    }
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // Mobile menu
+  document.getElementById('menu-btn')?.addEventListener('click', () => {
+    document.getElementById('mobile-menu')?.classList.toggle('hidden');
+  });
+  document.querySelectorAll('#mobile-menu a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('mobile-menu')?.classList.add('hidden'));
+  });
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const answer = btn.nextElementSibling as HTMLElement;
+      const icon = btn.querySelector('.faq-icon') as HTMLElement;
+      const isOpen = !answer.classList.contains('hidden');
+      document.querySelectorAll('.faq-answer').forEach(a => (a as HTMLElement).classList.add('hidden'));
+      document.querySelectorAll('.faq-icon').forEach(i => (i as HTMLElement).style.transform = '');
+      if (!isOpen) { answer.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; }
+    });
+  });
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.querySelector(href);
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+</script>
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+</style>
+
+</body>
 </html>

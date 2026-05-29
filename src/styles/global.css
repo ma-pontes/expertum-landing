@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+/* ── Fontes ─────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/lora/Lora-VariableFont_wght.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/lora/Lora-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Grimblade';
+  src: url('/fonts/grimblade/grimblade.otf') format('opentype'),
+       url('/fonts/grimblade/grimblade.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design tokens ──────────────────────────────────────────────────────── */
+
+@theme {
+  /* Fonts */
+  --font-sans:      'Geist', sans-serif;
+  --font-geist:     'Geist', sans-serif;
+  --font-lora:      'Lora', serif;
+  --font-headline:  'Lora', serif;
+  --font-grimblade: 'Grimblade', serif;
+  --font-mono:      ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Brand (burnt orange) */
+  --color-brand-50:  #FDF0E8;
+  --color-brand-100: #F9D9C4;
+  --color-brand-200: #F2B898;
+  --color-brand-300: #E8926A;
+  --color-brand-400: #D96E42;
+  --color-brand-500: #C24B18;
+  --color-brand-600: #A33D12;
+  --color-brand-700: #85300D;
+  --color-brand-800: #692509;
+  --color-brand-900: #461806;
+
+  /* Forest green */
+  --color-forest:       #09332C;
+  --color-forest-mid:   #2E4B3C;
+  --color-forest-dark:  #003B17;
+  --color-forest-light: #EDF5E3;
+
+  /* Cream */
+  --color-cream:       #F6F5EB;
+  --color-cream-warm:  #F7EDDA;
+  --color-cream-mid:   #F7DFBA;
+  --color-cream-peach: #FABF7A;
+
+  /* Sage / teal */
+  --color-sage:        #ABB28A;
+  --color-teal:        #185053;
+  --color-teal-light:  #4A8FA8;
+
+  /* Semantic tokens */
+  --color-primary:                 #C24B18;
+  --color-on-primary:              #FFFFFF;
+  --color-primary-container:       #FFF3E8;
+  --color-surface:                 #F6F5EB;
+  --color-on-surface:              #1C2320;
+  --color-on-surface-variant:      #3D4A45;
+  --color-surface-container-low:   #F0EFE5;
+  --color-surface-container:       #E6E4DA;
+  --color-outline-variant:         #D4D2C8;
+  --color-outline:                 #9E9C92;
+
+  /* Shadows */
+  --shadow-ambient: 0 12px 40px -12px rgba(9, 51, 44, 0.10);
+  --shadow-warm:    0 4px 24px -4px rgba(194, 75, 24, 0.15);
+  --shadow-forest:  0 8px 32px -8px rgba(9, 51, 44, 0.20);
+
+  /* Animations */
+  --animate-float:    float 6s ease-in-out infinite;
+  --animate-wave:     waveDrift 8s ease-in-out infinite;
+  --animate-fade-up:  fadeUp 0.6s ease-out forwards;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes waveDrift {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Geist', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #1C2320;
+    background-color: #F6F5EB;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Lora', serif;
+  }
+
+  ::selection {
+    background-color: #FFF3E8;
+    color: #5C1A00;
+  }
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #C24B18;
+    color: #FFFFFF;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.15s ease;
+  }
+  .btn-primary:hover { background-color: #A33D12; }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #D4D2C8;
+    color: #1C2320;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.15s ease;
+  }
+  .btn-outline:hover { background-color: #F0EFE5; }
+
+  .btn-forest {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #09332C;
+    color: #FFFFFF;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.15s ease;
+  }
+  .btn-forest:hover { background-color: #2E4B3C; }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #C24B18;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

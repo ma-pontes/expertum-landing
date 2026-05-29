@@ -1,0 +1,251 @@
+---
+import '../styles/global.css';
+
+const UPDATED_AT = '29 de maio de 2025';
+const CONTACT_EMAIL = 'contato@expertum.com.br';
+const APP_URL = 'https://expertum.vercel.app';
+---
+
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Termos de Uso — Expertum</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body style="background-color: #F6F5EB; color: #1C2320;">
+
+<!-- Header -->
+<header style="border-bottom: 1px solid #D4D2C8; background-color: #F6F5EB;">
+  <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/">
+      <img src="/logo-preto.svg" alt="Expertum" class="h-7 w-auto" />
+    </a>
+    <a href="/" class="text-sm font-medium transition-colors hover:opacity-70" style="color: #3D4A45;">
+      ← Voltar ao site
+    </a>
+  </div>
+</header>
+
+<!-- Content -->
+<main class="max-w-3xl mx-auto px-6 py-16">
+
+  <div class="mb-12">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color: #C24B18;">Legal</span>
+    <h1 class="font-lora text-3xl lg:text-4xl font-bold mt-3 mb-3" style="color: #1C2320;">
+      Termos de Uso
+    </h1>
+    <p class="text-sm" style="color: #9E9C92;">Última atualização: {UPDATED_AT}</p>
+  </div>
+
+  <div class="space-y-10">
+
+    <section class="rounded-xl p-5" style="background-color: #FFF3E8; border: 1px solid #F2B898;">
+      <p class="text-sm leading-relaxed" style="color: #692509;">
+        <strong>Leia com atenção.</strong> Ao criar uma conta ou utilizar a plataforma Expertum, você concorda
+        integralmente com estes Termos de Uso. Se não concordar, não utilize o serviço.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">1. O serviço</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        O <strong>Expertum</strong> é uma plataforma SaaS (Software as a Service) de gestão pericial destinada
+        a peritos judiciais. A plataforma oferece recursos de extração automática de processos via IA, geração
+        de checklist de campo, pré-laudo, respostas a impugnações, extração de sentença, roterizador de
+        vistorias e controle financeiro de honorários.
+      </p>
+      <p class="text-sm leading-relaxed mt-3" style="color: #3D4A45;">
+        O acesso ao serviço está disponível em <a href={APP_URL} style="color: #C24B18;">{APP_URL}</a> e
+        funciona através de navegador web, sem necessidade de instalação.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">2. Elegibilidade</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        O uso do Expertum é destinado a pessoas físicas ou jurídicas que atuam como peritos judiciais,
+        maiores de 18 anos e com capacidade legal para contratar. Ao se cadastrar, você declara que as
+        informações fornecidas são verdadeiras.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">3. Conta de usuário</h2>
+      <ul class="space-y-2">
+        {[
+          'Você é responsável pela confidencialidade da sua senha e por todas as atividades realizadas na sua conta.',
+          'Não é permitido compartilhar credenciais de acesso com terceiros.',
+          'Em caso de suspeita de acesso não autorizado, notifique-nos imediatamente em ' + CONTACT_EMAIL + '.',
+          'Reservamo-nos o direito de suspender contas com uso suspeito ou que violem estes Termos.',
+        ].map(item => (
+          <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: #3D4A45;">
+            <span class="mt-1 flex-shrink-0 text-xs" style="color: #ABB28A;">✓</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">4. Planos e pagamento</h2>
+      <div class="space-y-3 text-sm leading-relaxed" style="color: #3D4A45;">
+        <p>
+          O Expertum oferece planos gratuito e pagos (Pro e Escritório). Os valores e condições de cada plano
+          estão descritos na <a href="/#precos" style="color: #C24B18;">página de preços</a>.
+        </p>
+        <p>
+          <strong>Cobrança:</strong> Os planos pagos são cobrados mensalmente via cartão de crédito. A cobrança
+          ocorre na data de cada renovação.
+        </p>
+        <p>
+          <strong>Cancelamento:</strong> Você pode cancelar a assinatura a qualquer momento, diretamente no
+          painel de configurações. O acesso ao plano pago continua até o fim do período já pago — não há
+          reembolso proporcional de períodos não utilizados, salvo disposição legal.
+        </p>
+        <p>
+          <strong>Inadimplência:</strong> Em caso de falha no pagamento, a conta é rebaixada automaticamente
+          para o plano gratuito até que o pagamento seja regularizado.
+        </p>
+        <p>
+          <strong>Reajuste de preços:</strong> Poderemos reajustar os valores dos planos com aviso prévio de
+          30 dias por e-mail. O uso continuado após o reajuste indica concordância.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">5. Uso aceitável</h2>
+      <p class="text-sm leading-relaxed mb-4" style="color: #3D4A45;">É <strong>proibido</strong>:</p>
+      <ul class="space-y-2">
+        {[
+          'Usar a plataforma para fins ilegais ou que violem direitos de terceiros.',
+          'Fazer engenharia reversa, descompilar ou tentar extrair o código-fonte da aplicação.',
+          'Realizar ataques, tentativas de acesso não autorizado ou sobrecarga intencional dos sistemas.',
+          'Utilizar a plataforma para processar dados de terceiros sem autorização.',
+          'Revender, sublicenciar ou comercializar o acesso à plataforma sem autorização prévia.',
+        ].map(item => (
+          <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: #3D4A45;">
+            <span class="mt-1 flex-shrink-0 text-xs" style="color: #D96E42;">✕</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">6. Conteúdo e dados do usuário</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Você é o único proprietário dos dados e documentos que carrega na plataforma (PDFs de processos,
+        checklists, laudos, etc.). Ao utilizá-la, você nos concede uma licença limitada, não exclusiva e
+        revogável para processar esses dados exclusivamente com o objetivo de prestar o serviço contratado.
+      </p>
+      <p class="text-sm leading-relaxed mt-3" style="color: #3D4A45;">
+        Você declara que tem autorização para enviar os documentos carregados e que o uso não viola segredos
+        judiciais, sigilo profissional ou quaisquer determinações do processo ou do juízo.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">7. Natureza dos outputs de IA</h2>
+      <div class="rounded-xl p-5" style="background-color: #EDF5E3; border: 1px solid #ABB28A;">
+        <p class="text-sm leading-relaxed font-medium mb-2" style="color: #09332C;">Importante: os textos gerados pela IA são rascunhos.</p>
+        <p class="text-sm leading-relaxed" style="color: #2E4B3C;">
+          Checklists, pré-laudos, respostas a impugnações e extrações de sentença gerados pela plataforma são
+          <strong>rascunhos de apoio</strong> e não substituem o juízo técnico, a análise crítica e a
+          responsabilidade do perito. O conteúdo final de qualquer documento pericial é de exclusiva
+          responsabilidade do profissional que o assina.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">8. Disponibilidade e SLA</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Buscamos manter a plataforma disponível 24/7, mas não garantimos disponibilidade ininterrupta.
+        Manutenções programadas serão comunicadas com antecedência. Falhas pontuais não geram direito a
+        reembolso, salvo em caso de interrupção prolongada (superior a 72 horas consecutivas) causada
+        exclusivamente por falha nossa.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">9. Propriedade intelectual</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Todos os elementos da plataforma — código, design, marca, logotipos e textos — são de propriedade
+        exclusiva do Expertum ou de seus licenciantes. Nenhum destes Termos transfere ao usuário qualquer
+        direito de propriedade intelectual sobre a plataforma.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">10. Limitação de responsabilidade</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Na máxima extensão permitida por lei, o Expertum não se responsabiliza por danos indiretos,
+        incidentais, especiais ou consequenciais decorrentes do uso ou da impossibilidade de uso do serviço,
+        incluindo perda de dados ou lucros cessantes.
+      </p>
+      <p class="text-sm leading-relaxed mt-3" style="color: #3D4A45;">
+        Nossa responsabilidade total, em qualquer hipótese, fica limitada ao valor pago pelo usuário nos
+        últimos 3 meses anteriores ao evento gerador do dano.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">11. Rescisão</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Qualquer das partes pode encerrar o vínculo a qualquer momento. O usuário pode excluir a conta pelo
+        painel de configurações. O Expertum pode suspender ou encerrar contas que violem estes Termos,
+        com aviso prévio quando possível.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">12. Alterações nos Termos</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Podemos alterar estes Termos periodicamente. Mudanças relevantes serão comunicadas por e-mail com
+        pelo menos 15 dias de antecedência. O uso continuado após a vigência da nova versão implica
+        aceitação das alterações.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-lora text-xl font-semibold mb-3" style="color: #1C2320;">13. Lei aplicável e foro</h2>
+      <p class="text-sm leading-relaxed" style="color: #3D4A45;">
+        Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da
+        Comarca de São Paulo/SP para dirimir quaisquer controvérsias, com renúncia expressa a qualquer
+        outro, por mais privilegiado que seja.
+      </p>
+    </section>
+
+    <section class="rounded-2xl p-6" style="background-color: #09332C;">
+      <h2 class="font-lora text-lg font-semibold mb-2" style="color: #FFFFFF;">Dúvidas sobre os Termos?</h2>
+      <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.75);">
+        Entre em contato pelo e-mail abaixo — respondemos em até 3 dias úteis.
+      </p>
+      <a href={`mailto:${CONTACT_EMAIL}`}
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
+        style="background-color: #C24B18; color: #FFFFFF;">
+        {CONTACT_EMAIL}
+      </a>
+    </section>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-16 py-8" style="border-top: 1px solid #D4D2C8;">
+  <div class="max-w-4xl mx-auto px-6 flex flex-wrap items-center justify-between gap-4">
+    <a href="/">
+      <img src="/logo-preto.svg" alt="Expertum" class="h-6 w-auto opacity-60" />
+    </a>
+    <div class="flex gap-6">
+      <a href="/privacidade" class="text-xs transition-colors hover:opacity-70" style="color: #9E9C92;">Política de privacidade</a>
+      <a href="/termos" class="text-xs transition-colors hover:opacity-70" style="color: #9E9C92;">Termos de uso</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
