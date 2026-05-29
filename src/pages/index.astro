@@ -2,6 +2,7 @@
 import '../styles/global.css';
 
 const APP_URL = 'https://expertum.app';
+const LOGIN_URL = `${APP_URL}/login`;
 const SIGNUP_URL = `${APP_URL}/signup`;
 
 const features = [
@@ -208,7 +209,7 @@ const faqs = [
     </div>
 
     <div class="hidden md:flex items-center gap-3">
-      <a href={APP_URL} class="nav-link text-sm font-medium text-white/70 hover:text-white transition-colors">Entrar</a>
+      <a href={LOGIN_URL} class="nav-link text-sm font-medium text-white/70 hover:text-white transition-colors">Entrar</a>
       <a href={SIGNUP_URL} class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-xl transition-all hover:bg-brand-600">
         Começar grátis
       </a>
@@ -776,7 +777,7 @@ const faqs = [
     </p>
     <div class="mt-10 flex flex-wrap justify-center gap-3">
       <a href={SIGNUP_URL} class="btn-primary text-base px-10 py-4">Criar conta grátis</a>
-      <a href={APP_URL} class="text-base px-10 py-4 font-semibold rounded-xl transition-all"
+      <a href={LOGIN_URL} class="text-base px-10 py-4 font-semibold rounded-xl transition-all"
         style="border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF;">
         Já tenho conta
       </a>
@@ -803,7 +804,7 @@ const faqs = [
           <li><a href="#pipeline" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Pipeline de etapas</a></li>
           <li><a href="#precos" class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Preços</a></li>
           <li><a href={SIGNUP_URL} class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Criar conta</a></li>
-          <li><a href={APP_URL} class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Acessar plataforma</a></li>
+          <li><a href={LOGIN_URL} class="text-sm transition-colors hover:opacity-70" style="color: #3D4A45;">Acessar plataforma</a></li>
         </ul>
       </div>
       <div>
